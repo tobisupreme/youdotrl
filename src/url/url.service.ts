@@ -1,0 +1,17 @@
+import { Injectable } from '@nestjs/common';
+import { CreateShortUrlDto } from './dto/create-url.dto';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { Url } from '@prisma/client';
+import { AppUtilities } from 'src/app.utilities';
+
+@Injectable()
+export class UrlService {
+  constructor(private readonly prisma: PrismaService) {}
+
+  async create(createUrlDto: CreateShortUrlDto): Promise<Url> {
+    const shortUrl = AppUtilities.generateShortCode(7);
+    return await this.prisma.url.create({
+      data: { longUrl: createUrlDto.url, shortUrl },
+    });
+  }
+}
