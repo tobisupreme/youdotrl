@@ -4,6 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { RequestInterceptor } from './common/interceptors/request.interceptor';
 import { ResponseInterceptor } from './common/interceptors/response.interceptor';
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -12,6 +13,8 @@ async function bootstrap() {
     new RequestInterceptor(),
     new ResponseInterceptor(),
   );
+
+  app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
 
   const swaggerOptions = new DocumentBuilder()
     .setTitle('youdotrl')

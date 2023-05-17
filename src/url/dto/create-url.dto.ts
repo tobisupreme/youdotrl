@@ -1,9 +1,10 @@
-import { IsString, IsUrl } from 'class-validator';
+import { IsOptional, IsString, IsUrl } from 'class-validator';
 
 export class CreateShortUrlDto {
-  @IsUrl()
+  @IsUrl({}, { message: 'Please use a valid URL' })
   url: string;
 
   @IsString()
+  @IsOptional()
   customDomain?: string;
 }
