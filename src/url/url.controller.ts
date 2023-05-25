@@ -3,7 +3,7 @@ import { UrlService } from './url.service';
 import { CreateShortUrlDto } from './dto/create-url.dto';
 import { Url } from '@prisma/client';
 import { ApiTags } from '@nestjs/swagger';
-import { ApiResponseMetadata } from 'src/common/decorators/response.decorator';
+import { ApiResponseMetadata } from '../common/decorators/response.decorator';
 
 @ApiTags('URLs')
 @Controller('url')
