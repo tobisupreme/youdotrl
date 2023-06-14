@@ -37,11 +37,20 @@ export class ResponseInterceptor<T> implements NestInterceptor<T, Response<T>> {
     }
 
     return next.handle().pipe(
-      map((data) => ({
-        statusCode: responseOptions?.statusCode || 200,
-        message,
-        data,
-      })),
+      map((data) => {
+        if (
+          responseOptions?.statusCode >= 300 &&
+          responseOptions?.statusCode < 400
+        ) {
+          return data;
+        }
+
+        return {
+          statusCode: responseOptions?.statusCode || 200,
+          message,
+          data,
+        };
+      }),
     );
   }
 }

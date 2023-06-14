@@ -14,4 +14,12 @@ export class UrlService {
       data: { longUrl: createUrlDto.url, shortUrl },
     });
   }
+
+  async redirectOrThrow(shortUrl: string) {
+    const url = await this.prisma.url.findFirstOrThrow({
+      where: { shortUrl },
+    });
+
+    return url.longUrl;
+  }
 }
