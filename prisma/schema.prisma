@@ -13,9 +13,12 @@ datasource db {
 model Url {
   id           String   @id @default(auto()) @map("_id") @db.ObjectId
   createdAt    DateTime @default(now())
+  createdBy    String?
   updatedAt    DateTime @default(now()) @updatedAt
   longUrl      String
   shortUrl     String   @unique
   customDomain String?
+  archived     Boolean  @default(false)
   clicks       Int      @default(0)
+  title        String?
 }
