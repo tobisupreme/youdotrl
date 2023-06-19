@@ -25,7 +25,7 @@ async function bootstrap() {
     .build();
 
   const swagDocument = SwaggerModule.createDocument(app, swaggerOptions);
-  SwaggerModule.setup('api', app, swagDocument);
+  SwaggerModule.setup('/', app, swagDocument);
 
   const configService = app.get<ConfigService>(ConfigService);
   const port = configService.get('APP_PORT');
