@@ -4,6 +4,7 @@ import { UserSignUpDto } from './dto/sign-up.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { ApiResponseMetadata } from '../common/decorators/response.decorator';
 import { UserSignInDto } from './dto/sign-in.dto';
+import { Public } from '../common/decorators/auth.public.decorator';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -13,6 +14,7 @@ export class AuthController {
   /**
    * Create an account
    */
+  @Public()
   @Post()
   async signUp(@Body() authCredentials: UserSignUpDto) {
     return this.authService.signUp(authCredentials);
@@ -21,6 +23,7 @@ export class AuthController {
   /**
    * Log in account
    */
+  @Public()
   @ApiResponseMetadata({
     statusCode: 200,
   })
