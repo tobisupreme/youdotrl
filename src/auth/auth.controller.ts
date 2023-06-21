@@ -15,7 +15,7 @@ export class AuthController {
    * Create an account
    */
   @Public()
-  @Post()
+  @Post('signup')
   async signUp(@Body() authCredentials: UserSignUpDto) {
     return this.authService.signUp(authCredentials);
   }
