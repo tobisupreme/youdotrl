@@ -5,10 +5,12 @@ import { UserSignUpDto } from './dto/sign-up.dto';
 import { User } from '@prisma/client';
 import { UsersService } from '../users/users.service';
 import { UserSignInDto } from './dto/sign-in.dto';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
   constructor(
+    private jwtService: JwtService,
     private readonly prisma: PrismaService,
     private usersService: UsersService,
   ) {}
@@ -34,7 +36,9 @@ export class AuthService {
     if (!isMatch) {
       throw new UnauthorizedException();
     }
-    const { passwordHash, ...result } = user;
-    return result;
+    const payload = { sub: user.id, username: user.username };
+    return {
+      token: await this.jwtService.signAsync(payload),
+    };
   }
 }
