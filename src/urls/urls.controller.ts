@@ -1,5 +1,5 @@
 import { Controller, Post, Body, Get, Param, Redirect } from '@nestjs/common';
-import { UrlService } from './url.service';
+import { UrlService } from './urls.service';
 import { CreateShortUrlDto } from './dto/create-url.dto';
 import { Url } from '@prisma/client';
 import { ApiTags } from '@nestjs/swagger';
@@ -13,10 +13,10 @@ export class UrlController {
   /**
    * Redirect with shortened URL
    */
-  @Get('/:shortCode')
   @ApiResponseMetadata({
     statusCode: 302,
   })
+  @Get('/:shortCode')
   @Redirect()
   async redirect(@Param('shortCode') shortCode: string) {
     const url = await this.urlService.redirectOrThrow(shortCode);
