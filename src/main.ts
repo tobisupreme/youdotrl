@@ -22,6 +22,7 @@ async function bootstrap() {
     .setTitle('youdotrl')
     .setDescription('Shorten your URLS')
     .setVersion('0.0.1')
+    .addBearerAuth()
     .build();
 
   const swagDocument = SwaggerModule.createDocument(app, swaggerOptions);
