@@ -21,6 +21,18 @@ export class UrlController {
   constructor(private readonly urlService: UrlService) {}
 
   /**
+   * Fetch URLs
+   */
+  @ApiBearerAuth()
+  @Get('/urls')
+  @ApiResponseMetadata({
+    statusCode: 200,
+  })
+  async fetchUserUrls(@Req() req: RequestUser): Promise<Url[] | []> {
+    return this.urlService.fetchUrls(req);
+  }
+
+  /**
    * Redirect with shortened URL
    */
   @Public()

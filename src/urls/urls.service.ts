@@ -32,4 +32,10 @@ export class UrlService {
 
     return url.longUrl;
   }
+
+  async fetchUrls({ user }: RequestUser): Promise<Url[] | []> {
+    return await this.prisma.url.findMany({
+      where: { userId: user.sub, status: true },
+    });
+  }
 }
