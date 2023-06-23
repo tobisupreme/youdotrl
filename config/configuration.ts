@@ -3,7 +3,5 @@ export default () => ({
   CORS: {
     ALLOWED_ORIGINS: process.env.CORS_ALLOWED_ORIGINS?.split(',') || [],
   },
-  DATABASE: {
-    URL: process.env.DATABASE_URL,
-  },
+  DATABASE_URL: process.env.DATABASE_URL,
 });
