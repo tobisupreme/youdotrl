@@ -17,7 +17,7 @@ export class UrlService {
     return await this.prisma.url.create({
       data: {
         longUrl: createUrlDto.url,
-        shortUrl: `${headers.host}/${shortUrl}`,
+        shortUrl: `${headers.referer}${shortUrl}`,
         shortId: shortUrl,
         createdBy: user.sub,
         userId: user.sub,
