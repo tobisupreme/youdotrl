@@ -48,4 +48,4 @@ ENTRYPOINT [ "/app/docker-entrypoint.js" ]
 
 # Start the server by default, this can be overwritten at runtime
 EXPOSE 3456
-CMD [ "node", "dist/main.js" ]
+CMD [ "node", "dist/src/main.js" ]
