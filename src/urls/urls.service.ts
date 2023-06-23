@@ -25,9 +25,9 @@ export class UrlService {
     });
   }
 
-  async redirectOrThrow(shortUrl: string) {
+  async redirectOrThrow(shortId: string) {
     const url = await this.prisma.url.findFirstOrThrow({
-      where: { shortUrl },
+      where: { shortId },
     });
 
     return url.longUrl;
