@@ -13,6 +13,7 @@ import { Url } from '@prisma/client';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { ApiResponseMetadata } from '../common/decorators/response.decorator';
 import { Public } from '../common/decorators/auth.public.decorator';
+import { RequestUser } from '../common/interfaces';
 
 @ApiTags('URLs')
 @Controller()
@@ -44,7 +45,7 @@ export class UrlController {
   })
   async shortenUrl(
     @Body() createUrlDto: CreateShortUrlDto,
-    @Req() req: any,
+    @Req() req: RequestUser,
   ): Promise<Url> {
     return this.urlService.create(createUrlDto, req);
   }
