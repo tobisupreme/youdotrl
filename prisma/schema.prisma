@@ -33,6 +33,7 @@ model Url {
   clicks       Int      @default(0)
   title        String?
   status       Boolean  @default(true)
+  qrCode       String?
   user         User     @relation(fields: [userId], references: [id])
   userId       String   @db.ObjectId
 }
