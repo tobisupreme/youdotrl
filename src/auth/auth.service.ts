@@ -34,6 +34,7 @@ export class AuthService {
       data: { email, username, passwordHash },
     });
 
+    delete newUser.passwordHash;
     return newUser;
   }
 
