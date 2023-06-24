@@ -1,4 +1,4 @@
-import { IsOptional, IsString, IsUrl } from 'class-validator';
+import { IsBoolean, IsOptional, IsString, IsUrl } from 'class-validator';
 
 export class CreateShortUrlDto {
   @IsUrl({}, { message: 'Please use a valid URL' })
@@ -7,4 +7,8 @@ export class CreateShortUrlDto {
   @IsString()
   @IsOptional()
   customDomain?: string;
+
+  @IsBoolean()
+  @IsOptional()
+  generateQrCode?: boolean;
 }
