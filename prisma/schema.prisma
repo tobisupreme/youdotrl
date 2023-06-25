@@ -36,12 +36,13 @@ model Url {
   qrCode       String?
   user         User     @relation(fields: [userId], references: [id])
   userId       String   @db.ObjectId
-  tags         Tags[]
+  Tags         Tags[]   @relation(fields: [tagIds], references: [id])
+  tagIds       String[] @db.ObjectId
 }
 
 model Tags {
-  id    String  @id @default(auto()) @map("_id") @db.ObjectId
-  name  String
-  Url   Url?    @relation(fields: [urlId], references: [id])
-  urlId String? @db.ObjectId
+  id     String   @id @default(auto()) @map("_id") @db.ObjectId
+  name   String   @unique
+  urls   Url[]    @relation(fields: [urlIds], references: [id])
+  urlIds String[] @db.ObjectId
 }
