@@ -21,15 +21,15 @@ export class UrlController {
   constructor(private readonly urlService: UrlService) {}
 
   /**
-   * Fetch URLs
+   * Get shortened links
    */
   @ApiBearerAuth()
-  @Get('/urls')
+  @Get('/links')
   @ApiResponseMetadata({
     statusCode: 200,
   })
-  async fetchUserUrls(@Req() req: RequestUser): Promise<Url[] | []> {
-    return this.urlService.fetchUrls(req);
+  async fetchUserlinks(@Req() req: RequestUser): Promise<Url[] | []> {
+    return this.urlService.fetchLinks(req);
   }
 
   /**
@@ -51,7 +51,7 @@ export class UrlController {
    * Post a URL to be shortened
    */
   @ApiBearerAuth()
-  @Post('shorten')
+  @Post('/shorten')
   @ApiResponseMetadata({
     statusCode: 201,
   })
@@ -59,6 +59,6 @@ export class UrlController {
     @Body() createUrlDto: CreateShortUrlDto,
     @Req() req: RequestUser,
   ): Promise<Url> {
-    return this.urlService.create(createUrlDto, req);
+    return this.urlService.createLink(createUrlDto, req);
   }
 }

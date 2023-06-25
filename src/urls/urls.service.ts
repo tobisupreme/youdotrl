@@ -13,7 +13,7 @@ export class UrlService {
     private qrCodeService: QrcodeService,
   ) {}
 
-  async create(
+  async createLink(
     { generateQrCode, ...createUrlDto }: CreateShortUrlDto,
     { headers, user }: RequestUser,
   ): Promise<Url> {
@@ -43,7 +43,7 @@ export class UrlService {
     return url.longUrl;
   }
 
-  async fetchUrls({ user }: RequestUser): Promise<Url[] | []> {
+  async fetchLinks({ user }: RequestUser): Promise<Url[] | []> {
     return await this.prisma.url.findMany({
       where: { userId: user.sub, status: true },
     });
