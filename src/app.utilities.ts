@@ -103,6 +103,7 @@ export class AppUtilities {
       case 'P2021':
       case 'P2022':
       case 'P2023':
+        return new BadRequestException('Invalid ID');
       case 'P2026':
       case 'P2027':
         return new BadRequestException(message);
