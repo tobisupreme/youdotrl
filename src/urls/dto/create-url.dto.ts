@@ -11,4 +11,7 @@ export class CreateShortUrlDto {
   @IsBoolean()
   @IsOptional()
   generateQrCode?: boolean;
+
+  @IsOptional()
+  tags?: string[];
 }
