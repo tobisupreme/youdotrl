@@ -6,6 +6,7 @@ import {
   Param,
   Redirect,
   Req,
+  Patch,
 } from '@nestjs/common';
 import { UrlService } from './urls.service';
 import { CreateShortUrlDto } from './dto/create-url.dto';
@@ -14,6 +15,7 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { ApiResponseMetadata } from '../common/decorators/response.decorator';
 import { Public } from '../common/decorators/auth.public.decorator';
 import { RequestUser } from '../common/interfaces';
+import { UpdateUrlDto } from './dto/update-url.dto';
 
 @ApiTags('URLs')
 @Controller()
@@ -60,5 +62,18 @@ export class UrlController {
     @Req() req: RequestUser,
   ): Promise<Url> {
     return this.urlService.createLink(createUrlDto, req);
+  }
+
+  /**
+   * Update shortened link
+   */
+  @Public()
+  @Patch('links/:id')
+  async updateLink(
+    @Param('id') linkId: string,
+    @Body() updateDto: UpdateUrlDto,
+    @Req() req: RequestUser,
+  ) {
+    return this.urlService.updateLink(linkId, updateDto, req);
   }
 }
