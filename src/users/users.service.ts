@@ -6,9 +6,9 @@ import { User } from '@prisma/client';
 export class UsersService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findOne(email: string): Promise<User | undefined> {
-    const user = await this.prisma.user.findUnique({
-      where: { email },
+  async findOne(identity: string): Promise<User | undefined> {
+    const user = await this.prisma.user.findFirst({
+      where: { OR: [{ email: identity }, { username: identity }] },
     });
 
     if (!user) {
