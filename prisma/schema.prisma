@@ -1,47 +1,57 @@
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-3.0.x"]
 }
 
 datasource db {
-  provider = "mongodb"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
 model User {
-  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  id           String   @id @default(uuid()) @db.Uuid
   email        String   @unique
   username     String   @unique
+  passwordHash String
   firstName    String?
   lastName     String?
-  passwordHash String
-  createdAt    DateTime @default(now())
   status       Boolean  @default(true)
+  createdAt    DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt    DateTime @default(now()) @updatedAt() @db.Timestamptz(6)
   archived     Boolean  @default(false)
-  urls         Url[]
+  urls         Url[]    @relation(name: "createdBy")
+  Url          Url[]    @relation(name: "updatedBy")
+
+  @@map("users")
 }
 
 model Url {
-  id           String   @id @default(auto()) @map("_id") @db.ObjectId
-  createdAt    DateTime @default(now())
-  createdBy    String
-  updatedAt    DateTime @default(now()) @updatedAt
+  id           String   @id @default(uuid()) @db.Uuid
   longUrl      String
   shortUrl     String   @unique
+  title        String?
   shortId      String
   customDomain String?
   archived     Boolean  @default(false)
   clicks       Int      @default(0)
-  title        String?
   status       Boolean  @default(true)
   qrCode       String?
-  user         User     @relation(fields: [userId], references: [id])
-  userId       String   @db.ObjectId
-  tags         Tags[]
+  userId       String?  @db.Uuid
+  createdBy    String?  @db.Uuid
+  updatedBy    String?  @db.Uuid
+  createdAt    DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt    DateTime @default(now()) @updatedAt() @db.Timestamptz(6)
+  creator      User?    @relation(name: "createdBy", fields: [createdBy], references: [id])
+  updator      User?    @relation(name: "updatedBy", fields: [updatedBy], references: [id])
+  tags         Tag[]
+
+  @@map("urls")
 }
 
-model Tags {
-  id    String  @id @default(auto()) @map("_id") @db.ObjectId
-  name  String
-  Url   Url?    @relation(fields: [urlId], references: [id])
-  urlId String? @db.ObjectId
+model Tag {
+  id   String @id @default(uuid()) @db.Uuid
+  name String @unique
+  urls Url[]
+
+  @@map("tags")
 }

@@ -6,22 +6,27 @@ import { AppUtilities } from '../app.utilities';
 import { RequestUser } from '../common/interfaces';
 import { QrcodeService } from '../qrcode/qrcode.service';
 import { UpdateUrlDto } from './dto/update-url.dto';
+import { TagsService } from '../tags/tags.service';
 
 @Injectable()
 export class UrlService {
   constructor(
     private readonly prisma: PrismaService,
     private qrCodeService: QrcodeService,
+    private tagService: TagsService,
   ) {}
 
   async createLink(
-    { generateQrCode, ...createUrlDto }: CreateShortUrlDto,
+    { generateQrCode, tags, ...createUrlDto }: CreateShortUrlDto,
     { headers, user }: RequestUser,
-  ): Promise<Url> {
+  ) {
     const shortId = AppUtilities.generateShortCode(7);
     const shortUrl = `${headers.referer}${shortId}`;
     const qrCode = generateQrCode
       ? await this.qrCodeService.generateQrCode(shortUrl)
+      : undefined;
+    const lTags = tags?.length
+      ? tags.map((tag) => tag.toLowerCase())
       : undefined;
 
     return await this.prisma.url.create({
@@ -32,7 +37,20 @@ export class UrlService {
         qrCode,
         createdBy: user.sub,
         userId: user.sub,
+        ...(lTags && {
+          tags: {
+            connectOrCreate: lTags.map((name) => ({
+              where: {
+                name,
+              },
+              create: {
+                name,
+              },
+            })),
+          },
+        }),
       },
+      include: { tags: { select: { name: true } } },
     });
   }
 
@@ -47,12 +65,16 @@ export class UrlService {
   async fetchLinks({ user }: RequestUser): Promise<Url[] | []> {
     return await this.prisma.url.findMany({
       where: { userId: user.sub, status: true },
+      include: {
+        creator: { select: { id: true, username: true } },
+        tags: { select: { name: true } },
+      },
     });
   }
 
   async updateLink(
     id: string,
-    { customShortId, generateQrCode, tags }: UpdateUrlDto,
+    { customShortId, generateQrCode, tags: tagNames }: UpdateUrlDto,
     { headers }: RequestUser,
   ): Promise<Url> {
     const url = await this.prisma.url.findFirstOrThrow({
@@ -71,14 +93,8 @@ export class UrlService {
         : await this.qrCodeService.generateQrCode(url.shortUrl);
     }
 
-    await this.prisma.tags.deleteMany({ where: { urlId: id } });
-    const createdTags = await Promise.all(
-      tags.map(async (tagName) => {
-        return await this.prisma.tags.create({
-          data: { name: tagName, urlId: id },
-        });
-      }),
-    );
+    const tags = await this.tagService.getTags(tagNames);
+    const tagsArray = tags.map(({ id }) => ({ id }));
 
     return await this.prisma.url.update({
       where: { id },
@@ -86,9 +102,9 @@ export class UrlService {
         shortId: customShortId,
         shortUrl,
         ...(qrCode && { qrCode }),
-        tags: { connect: createdTags.map(({ id }) => ({ id })) },
+        tags: { set: tagsArray },
       },
-      include: { tags: true },
+      include: { tags: { select: { name: true } } },
     });
   }
 
