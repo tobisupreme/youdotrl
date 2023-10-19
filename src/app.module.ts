@@ -3,8 +3,6 @@ import { ConfigModule } from '@nestjs/config';
 import { UrlModule } from './urls/urls.module';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
-import { QrcodeModule } from './qrcode/qrcode.module';
-import { TagsModule } from './tags/tags.module';
 import configuration from '../config/configuration';
 
 @Module({
@@ -17,8 +15,6 @@ import configuration from '../config/configuration';
     UrlModule,
     AuthModule,
     UsersModule,
-    QrcodeModule,
-    TagsModule,
   ],
   controllers: [],
   providers: [],

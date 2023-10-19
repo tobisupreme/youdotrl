@@ -16,11 +16,15 @@ import { ApiResponseMetadata } from '../common/decorators/response.decorator';
 import { Public } from '../common/decorators/auth.public.decorator';
 import { RequestUser } from '../common/interfaces';
 import { UpdateUrlDto } from './dto/update-url.dto';
+import { TagsService } from '../tags/tags.service';
 
 @ApiTags('URLs')
 @Controller()
 export class UrlController {
-  constructor(private readonly urlService: UrlService) {}
+  constructor(
+    private readonly urlService: UrlService,
+    private tagService: TagsService,
+  ) {}
 
   /**
    * Get shortened links
@@ -60,7 +64,7 @@ export class UrlController {
   async shortenUrl(
     @Body() createUrlDto: CreateShortUrlDto,
     @Req() req: RequestUser,
-  ): Promise<Url> {
+  ) {
     return this.urlService.createLink(createUrlDto, req);
   }
 

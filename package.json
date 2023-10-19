@@ -9,6 +9,8 @@
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "generate:schema": "yarn prisma generate --schema=prisma/schema.prisma",
+    "migration:generate": "yarn prisma migrate dev --create-only --schema=prisma/schema.prisma",
+    "migration:apply": "yarn prisma migrate deploy --schema=prisma/schema.prisma",
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
