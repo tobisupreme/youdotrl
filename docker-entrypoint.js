@@ -9,7 +9,8 @@ const env = { ...process.env }
   if (process.argv.slice(2).join(' ') === 'yarn run start') {
     await exec('npx prisma migrate deploy')
   }
-
+  
+  await exec('yarn migration:apply')
   // launch application
   await exec(process.argv.slice(2).join(' '))
 })()
