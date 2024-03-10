@@ -1,14 +1,21 @@
-# fly.toml app configuration file generated for yourl on 2023-06-19T10:09:06+01:00
+# fly.toml app configuration file generated for yourl on 2024-03-10T12:19:25+01:00
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = "yourl"
-primary_region = "lhr"
+app = 'yourl'
+primary_region = 'lhr'
+
+[build]
 
 [http_service]
-  internal_port = 3456
+  internal_port = 8080
   force_https = true
   auto_stop_machines = true
   auto_start_machines = true
   min_machines_running = 0
+
+[[vm]]
+  memory = '1gb'
+  cpu_kind = 'shared'
+  cpus = 1

@@ -1,7 +1,7 @@
 # syntax = docker/dockerfile:1
 
 # Adjust NODE_VERSION as desired
-ARG NODE_VERSION=16.16.0
+ARG NODE_VERSION=18.19.1
 FROM node:${NODE_VERSION}-slim as base
 
 LABEL fly_launch_runtime="NestJS/Prisma"
@@ -17,10 +17,6 @@ RUN apt-get update -y && apt-get install -y openssl
 
 # Throw-away build stage to reduce size of final image
 FROM base as build
-
-# Install packages needed to build node modules
-RUN apt-get update -qq && \
-    apt-get install -y python pkg-config build-essential openssl 
 
 # Install node modules
 COPY --link package.json yarn.lock ./
@@ -47,5 +43,5 @@ COPY --from=build /app /app
 ENTRYPOINT [ "/app/docker-entrypoint.js" ]
 
 # Start the server by default, this can be overwritten at runtime
-EXPOSE 3456
+EXPOSE 8080
 CMD [ "node", "dist/src/main.js" ]
