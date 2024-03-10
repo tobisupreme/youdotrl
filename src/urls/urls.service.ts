@@ -1,20 +1,24 @@
+import { CrudService } from '@@/common/database/crud.service';
+import { RequestUser } from '@@/common/interfaces';
+import { PrismaService } from '@@/prisma/prisma.service';
+import { QrcodeService } from '@@/qrcode/qrcode.service';
+import { TagsService } from '@@/tags/tags.service';
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { CreateShortUrlDto } from './dto/create-url.dto';
-import { PrismaService } from '../prisma/prisma.service';
-import { Url } from '@prisma/client';
+import { Prisma, Url } from '@prisma/client';
 import { AppUtilities } from '../app.utilities';
-import { RequestUser } from '../common/interfaces';
-import { QrcodeService } from '../qrcode/qrcode.service';
+import { CreateShortUrlDto } from './dto/create-url.dto';
 import { UpdateUrlDto } from './dto/update-url.dto';
-import { TagsService } from '../tags/tags.service';
+import { UrlMapType } from './urls.maptype';
 
 @Injectable()
-export class UrlService {
+export class UrlService extends CrudService<Prisma.UrlDelegate, UrlMapType> {
   constructor(
     private readonly prisma: PrismaService,
     private qrCodeService: QrcodeService,
     private tagService: TagsService,
-  ) {}
+  ) {
+    super(prisma.url);
+  }
 
   async createLink(
     { generateQrCode, tags, ...createUrlDto }: CreateShortUrlDto,
@@ -29,7 +33,7 @@ export class UrlService {
       ? tags.map((tag) => tag.toLowerCase())
       : undefined;
 
-    return await this.prisma.url.create({
+    const url = await this.prisma.url.create({
       data: {
         longUrl: createUrlDto.url,
         shortUrl,
@@ -52,6 +56,8 @@ export class UrlService {
       },
       include: { tags: { select: { name: true } } },
     });
+
+    return { url: { ...url, tags: url.tags.map((tag) => tag.name) } };
   }
 
   async redirectOrThrow(shortId: string) {
@@ -63,12 +69,17 @@ export class UrlService {
   }
 
   async fetchLinks({ user }: RequestUser): Promise<Url[] | []> {
-    return await this.prisma.url.findMany({
+    const args: Prisma.UrlFindManyArgs = {
       where: { userId: user.sub, status: true },
       include: {
         creator: { select: { id: true, username: true } },
         tags: { select: { name: true } },
       },
+    };
+
+    return await this.findManyPaginate(args, {}, (data) => {
+      if (!data.tags.length) return data;
+      return { ...data, tags: data.tags.map((tag) => tag.name) };
     });
   }
 

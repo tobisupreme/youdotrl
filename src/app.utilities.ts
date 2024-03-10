@@ -12,60 +12,25 @@ const CHARS = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
 @Injectable()
 export class AppUtilities {
+  public static decode(
+    data: string,
+    encoding: BufferEncoding = 'base64',
+  ): string {
+    return Buffer.from(data, encoding).toString();
+  }
+
+  public static encode(
+    data: string,
+    encoding: BufferEncoding = 'base64',
+  ): string {
+    return Buffer.from(data).toString(encoding);
+  }
+
   public static generateShortCode(charLen = 6): string {
     const nanoid = customAlphabet(CHARS, charLen);
 
     return nanoid();
   }
-
-  public static requestErrorHandler = (response: any = {}) => {
-    const {
-      message: errorMessage,
-      response: serverResp,
-      isCancel,
-      isNetwork,
-      config,
-    } = response;
-
-    let message = errorMessage,
-      data: any = {},
-      isServerError = false;
-
-    if (serverResp?.data) {
-      isServerError = true;
-      message =
-        serverResp.data?.error ||
-        serverResp.data?.message ||
-        'Unexpected error occurred!';
-      data =
-        typeof serverResp.data === 'object'
-          ? { ...serverResp.data }
-          : { data: serverResp.data };
-      delete data.message;
-    } else if (isCancel) {
-      message = 'Request timed out.';
-    } else if (isNetwork) {
-      message = 'Network not available!';
-    }
-
-    const errorData = {
-      message,
-      isServerError,
-      ...(isServerError && {
-        data: {
-          ...data,
-          errorMessage,
-          api: {
-            method: config?.method,
-            url: config?.url,
-            baseURL: config?.baseURL,
-          },
-        },
-      }),
-    };
-
-    return errorData;
-  };
 
   public static handleException(error: any): Error {
     const errorCode: string = error.code;
@@ -125,4 +90,53 @@ export class AppUtilities {
         }
     }
   }
+
+  public static requestErrorHandler = (response: any = {}) => {
+    const {
+      message: errorMessage,
+      response: serverResp,
+      isCancel,
+      isNetwork,
+      config,
+    } = response;
+
+    let message = errorMessage,
+      data: any = {},
+      isServerError = false;
+
+    if (serverResp?.data) {
+      isServerError = true;
+      message =
+        serverResp.data?.error ||
+        serverResp.data?.message ||
+        'Unexpected error occurred!';
+      data =
+        typeof serverResp.data === 'object'
+          ? { ...serverResp.data }
+          : { data: serverResp.data };
+      delete data.message;
+    } else if (isCancel) {
+      message = 'Request timed out.';
+    } else if (isNetwork) {
+      message = 'Network not available!';
+    }
+
+    const errorData = {
+      message,
+      isServerError,
+      ...(isServerError && {
+        data: {
+          ...data,
+          errorMessage,
+          api: {
+            method: config?.method,
+            url: config?.url,
+            baseURL: config?.baseURL,
+          },
+        },
+      }),
+    };
+
+    return errorData;
+  };
 }
